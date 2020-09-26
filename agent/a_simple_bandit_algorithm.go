@@ -32,6 +32,7 @@ func SimpleBandit(bandit model.SimpleActionFunc, actions []model.Action, epsilon
 		N[a] = 0
 	}
 
+	monitor := utils.LiveMonitor{Value: "reward"}
 	for {
 		var A model.Action
 		// Random action with probability ɛ
@@ -43,17 +44,29 @@ func SimpleBandit(bandit model.SimpleActionFunc, actions []model.Action, epsilon
 		R := bandit(A)
 		N[A] = N[A] + 1
 		Q[A] = Q[A] + model.UintToValue(1/N[A])*(R.Value()-Q[A])
+
+		monitor.ComputeAndLog(float64(R))
 	}
 }
 
 func TestSimpleBandit() {
-	log.Println("Testing SimpleBandit agent... (Press Ctrl^C to end)")
-	const FIRST_ACTION model.Action = 1
-	const SECOND_ACTION model.Action = 2
+	log.Println("Testing SimpleBandit (10-armed testbed agent)... (Press Ctrl^C to end)")
+	const (
+		FIRST model.Action = 1 + iota
+		SECOND
+		THIRD
+		FOURTH
+		FIFTH
+		SIXTH
+		SEVENTH
+		EIGHTH
+		NINTH
+		TENTH
+	)
 	bandit := func(action model.Action) model.Reward {
-		log.Println("Action taken", action)
+		log.Println("Action taken:", action)
 		time.Sleep(1 * time.Second)
 		return model.Reward(math.Pow(float64(action), 1/float64(action)))
 	}
-	SimpleBandit(bandit, []model.Action{FIRST_ACTION, SECOND_ACTION}, .05)
+	SimpleBandit(bandit, []model.Action{FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH}, .05)
 }
