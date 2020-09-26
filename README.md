@@ -16,7 +16,12 @@ _NB: I mentioned the reference to the book boxes in the code according to the se
 
 ```console
 $ git clone https://github.com/cyrildever/reinforcement-learning-in-golang.git && cd reinforcement-learning-in-golang && go build
-$ ./rl-algo --test="simple-bandit"
+```
+
+```
+Usage of ./rl-algo:
+  -test string
+        The test to launch (eg. simple-bandit)
 ```
 
 ##### k-armed bandit

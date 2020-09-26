@@ -46,7 +46,7 @@ func SimpleBandit(bandit model.SimpleActionFunc, actions []model.Action, epsilon
 }
 
 func TestSimpleBandit() {
-	log.Println("Testing SimpleBandit... (Press Ctrl^C to end)")
+	log.Println("Testing SimpleBandit agent... (Press Ctrl^C to end)")
 	const FIRST_ACTION model.Action = 1
 	const SECOND_ACTION model.Action = 2
 	bandit := func(action model.Action) model.Reward {
