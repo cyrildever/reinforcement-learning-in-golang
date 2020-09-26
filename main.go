@@ -1,12 +1,18 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"rl-algo/rl"
 )
 
 // Usage:
-// ./rl-algo
+// ./rl-algo -test="simple-bandit"
 func main() {
+	test := flag.String("test", "", "The test to launch (eg. simple-bandit)")
+
+	flag.Parse()
+
 	// Print special information for library users
 	fmt.Println("")
 	fmt.Println("COPYRIGHT NOTICE")
@@ -15,4 +21,9 @@ func main() {
 	fmt.Println("")
 	fmt.Println("© 2020 Cyril Dever. All rights reserved.")
 	fmt.Println("")
+
+	switch *test {
+	case "simple-bandit":
+		rl.TestSimpleBandit()
+	}
 }

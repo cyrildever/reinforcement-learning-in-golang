@@ -12,7 +12,34 @@ The objective here was to transform the described algorithms found throughout th
 _NB: I have mentioned the reference to the book boxes according to the second edition paging._
 
 
-## License
+### Usage
+
+```console
+$ git clone https://github.com/cyrildever/reinforcement-learning-in-golang.git && cd reinforcement-learning-in-golang && go build
+```
+
+##### k-armed bandit
+
+```golang
+import (
+    "rl-algo/rl"
+    "rl-algo/rl/model"
+)
+
+// DEFINE ACTIONS
+actions := []model.Action{FIRST_ACTION, SECOND_ACTION}
+
+// IMPLEMENT bandit() FUNCTION
+bandit := func(action model.Action) model.Reward {
+    // DO THE ACTION AND BUILD THE REWARD
+    return reward
+}
+
+rl.SimpleBandit(bandit, actions, .05)
+```
+
+
+### License
 
 The code in Go is distributed under an [MIT license](LICENSE).
 
