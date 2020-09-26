@@ -4,6 +4,11 @@ package model
 type Reward float64
 
 // Float64 ...
-func (r Reward) Value() Value {
-	return Value(r)
+func (r Reward) Float64() float64 {
+	return float64(r)
+}
+
+// ToValue ...
+func (r Reward) ToValue() Value {
+	return Value(float64(r))
 }

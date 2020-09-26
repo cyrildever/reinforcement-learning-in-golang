@@ -7,7 +7,7 @@ import (
 
 // LiveMonitor ...
 type LiveMonitor struct {
-	Value   string // The name of the followed value, eg. "reward"
+	Output  string // The name of the followed value, eg. "reward"
 	steps   float64
 	average float64
 }
@@ -16,5 +16,5 @@ type LiveMonitor struct {
 func (m *LiveMonitor) ComputeAndLog(v float64) {
 	m.steps += 1
 	m.average = ((m.steps-1)*m.average + v) / m.steps
-	log.Println(fmt.Sprintf("average_%s=%.6f;steps=%d", m.Value, m.average, int(m.steps)))
+	log.Println(fmt.Sprintf("average_%s=%.6f;steps=%d", m.Output, m.average, int(m.steps)))
 }
