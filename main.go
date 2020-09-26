@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"rl-algo/rl"
+	"rl-algo/agent"
 )
 
 // Usage:
@@ -24,6 +24,6 @@ func main() {
 
 	switch *test {
 	case "simple-bandit":
-		rl.TestSimpleBandit()
+		agent.TestSimpleBandit()
 	}
 }

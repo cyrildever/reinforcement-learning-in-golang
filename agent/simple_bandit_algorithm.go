@@ -1,9 +1,9 @@
-package rl
+package agent
 
 import (
 	"log"
-	"rl-algo/rl/model"
-	"rl-algo/rl/utils"
+	"rl-algo/model"
+	"rl-algo/utils"
 	"time"
 
 	"golang.org/x/exp/rand"
