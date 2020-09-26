@@ -2,6 +2,7 @@ package agent
 
 import (
 	"log"
+	"math"
 	"rl-algo/model"
 	"rl-algo/utils"
 	"time"
@@ -52,7 +53,7 @@ func TestSimpleBandit() {
 	bandit := func(action model.Action) model.Reward {
 		log.Println("Action taken", action)
 		time.Sleep(1 * time.Second)
-		return model.Reward(float64(action) * rand.Float64())
+		return model.Reward(math.Pow(float64(action), 1/float64(action)))
 	}
 	SimpleBandit(bandit, []model.Action{FIRST_ACTION, SECOND_ACTION}, .05)
 }
