@@ -12,7 +12,7 @@ import (
 
 // SimpleBandit implements "a simple bandit algorithm" (page 32)
 //
-// It takes the function `bandit()`` assuming to take an action and return a corresponding reward,
+// It takes the function `bandit()` assuming to take an action and return a corresponding reward (w/o using any state),
 // plus an array of the `k` possible actions to take and the ɛ probability of taking a random action rather than the greedy one.
 func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float64) {
 	if len(actions) == 0 {
@@ -31,6 +31,7 @@ func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float
 		Q[a] = 0
 		N[a] = 0
 	}
+	__ := model.State(0) // State is irrelevant here
 
 	monitor := utils.LiveMonitor{Output: "reward"}
 	for {
@@ -41,13 +42,15 @@ func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float
 		} else {
 			A = *bandit.Argmax(Q)
 		}
-		R := bandit(A)
+		_, R := bandit(__, A)
 		N[A] = N[A] + 1
 		Q[A] = Q[A] + model.UintToValue(1/N[A])*(R.ToValue()-Q[A])
 
 		monitor.ComputeAndLog(float64(R))
 	}
 }
+
+//--- TEST
 
 func TestSimpleBandit() {
 	log.Println("Testing SimpleBandit (10-armed testbed agent)... (Press Ctrl^C to end)")
@@ -75,10 +78,10 @@ func TestSimpleBandit() {
 		model.Action1D{Parameter: NINTH},
 		model.Action1D{Parameter: TENTH},
 	}
-	bandit := func(action model.Action) model.Reward {
+	bandit := func(__ model.State, action model.Action) (model.State, model.Reward) {
 		log.Println("Action taken:", action)
 		time.Sleep(1 * time.Second)
-		return model.Reward(math.Pow(action.Value().Float64(), 1/action.Value().Float64()))
+		return __, model.Reward(math.Pow(action.Value().Float64(), 1/action.Value().Float64()))
 	}
 	SimpleBandit(bandit, actions, .05)
 }

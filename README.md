@@ -1,6 +1,6 @@
 # reinforcement-learning-in-golang
 
-Code freely created in Go from the ["Reinforcement Learning - An Introduction (Second edition)"](https://mitpress.mit.edu/books/reinforcement-learning-second-edition) book by Richard S. Sutton and Andrew G. Barto.
+Code freely created in Go from the ["Reinforcement Learning - An Introduction"](https://mitpress.mit.edu/books/reinforcement-learning-second-edition) book by Richard S. Sutton and Andrew G. Barto.
 
 
 ### Motivation

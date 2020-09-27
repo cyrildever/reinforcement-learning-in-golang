@@ -5,16 +5,19 @@ import (
 	"time"
 
 	"golang.org/x/exp/rand"
+	"gonum.org/v1/gonum/mat"
 )
 
-// Action interface must be implemented as a vector of n parameter(s)/dimension(s)
+// Action interface must be implemented as some kind of vector of n parameter(s)/dimension(s)
 type Action interface {
 	Value() Value
+	Vector() mat.Vector
 }
 
 // ActionFunc is the "interface" for any action giving a reward, ie.
-// when implementing such a function, it should take the action and return the corresponding reward amount.
-type ActionFunc func(Action) Reward
+// when implementing such a function, it should take the current state and the action
+// and return the new state and the corresponding reward.
+type ActionFunc func(State, Action) (State, Reward)
 
 // Argmax returns the greedy action in the passed map of values
 // or a random action if multiple actions are greedy
@@ -67,6 +70,10 @@ func (a Action1D) Value() Value {
 	return Value(a.Parameter)
 }
 
+func (a Action1D) Vector() mat.Vector {
+	return mat.NewVecDense(1, []float64{a.Parameter})
+}
+
 // Action2D is a two-dimension vector implementing the Action interface
 type Action2D struct {
 	X float64
@@ -75,6 +82,10 @@ type Action2D struct {
 
 func (a Action2D) Value() Value {
 	return Value(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2)))
+}
+
+func (a Action2D) Vector() mat.Vector {
+	return mat.NewVecDense(2, []float64{a.X, a.Y})
 }
 
 // Action3D is a three-dimension vector implementing the Action interface
@@ -88,7 +99,11 @@ func (a Action3D) Value() Value {
 	return Value(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2) + math.Pow(a.Z, 2)))
 }
 
-// Action4D is a three-dimension vector implementing the Action interface
+func (a Action3D) Vector() mat.Vector {
+	return mat.NewVecDense(3, []float64{a.X, a.Y, a.Z})
+}
+
+// Action4D is a four-dimension vector implementing the Action interface
 type Action4D struct {
 	X float64
 	Y float64
@@ -98,4 +113,8 @@ type Action4D struct {
 
 func (a Action4D) Value() Value {
 	return Value(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2) + math.Pow(a.Z, 2) + math.Pow(a.T, 2)))
+}
+
+func (a Action4D) Vector() mat.Vector {
+	return mat.NewVecDense(4, []float64{a.X, a.Y, a.Z, a.T})
 }
