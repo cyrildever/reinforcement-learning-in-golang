@@ -14,14 +14,14 @@ type Action interface {
 	Vector() mat.Vector
 }
 
-// ActionFunc is the "interface" for any action giving a reward, ie.
-// when implementing such a function, it should take the current state and the action
-// and return the new state and the corresponding reward.
-type ActionFunc func(State, Action) (State, Reward)
+// ActionFunc is the actual m.o. for any action granting a reward by transforming a state into another,
+// ie. when implementing such a function, it should take the current state and the action to take and
+// return the new state and corresponding reward.
+type ActionFunc func(*State, Action) (*State, Reward)
 
 // Argmax returns the greedy action in the passed map of values
 // or a random action if multiple actions are greedy
-func (f ActionFunc) Argmax(values map[Action]Value) (greedy *Action) {
+func Argmax(values map[Action]Value) (greedy *Action) {
 	var highest Value = 0
 	var greedies []*Action
 	for a := range values {

@@ -31,7 +31,6 @@ func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float
 		Q[a] = 0
 		N[a] = 0
 	}
-	__ := model.State(0) // State is irrelevant here
 
 	monitor := utils.LiveMonitor{Output: "reward"}
 	for {
@@ -40,9 +39,9 @@ func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float
 		if ok, err := utils.Pick(epsilon, src); err == nil && ok {
 			A = model.Random(actions)
 		} else {
-			A = *bandit.Argmax(Q)
+			A = *model.Argmax(Q)
 		}
-		_, R := bandit(__, A)
+		_, R := bandit(nil, A)
 		N[A] = N[A] + 1
 		Q[A] = Q[A] + model.UintToValue(1/N[A])*(R.ToValue()-Q[A])
 
@@ -78,7 +77,7 @@ func TestSimpleBandit() {
 		model.Action1D{Parameter: NINTH},
 		model.Action1D{Parameter: TENTH},
 	}
-	bandit := func(__ model.State, action model.Action) (model.State, model.Reward) {
+	bandit := func(__ *model.State, action model.Action) (*model.State, model.Reward) {
 		log.Println("Action taken:", action)
 		time.Sleep(1 * time.Second)
 		return __, model.Reward(math.Pow(action.Value().Float64(), 1/action.Value().Float64()))
