@@ -25,7 +25,7 @@ func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float
 	src := rand.NewSource(uint64(time.Now().UnixNano()))
 
 	// Initialize
-	Q := make(map[model.Action]model.Value, k)
+	Q := make(model.ActionValues, k)
 	N := make(map[model.Action]uint, k)
 	for _, a := range actions {
 		Q[a] = 0
@@ -43,9 +43,9 @@ func SimpleBandit(bandit model.ActionFunc, actions []model.Action, epsilon float
 		}
 		_, R := bandit(nil, A)
 		N[A] = N[A] + 1
-		Q[A] = Q[A] + model.UintToValue(1/N[A])*(R.ToValue()-Q[A])
+		Q[A] = Q[A] + model.Reward(1/N[A])*(R-Q[A])
 
-		monitor.ComputeAndLog(float64(R))
+		monitor.ComputeAndLog(R.Value())
 	}
 }
 
@@ -77,10 +77,11 @@ func TestSimpleBandit() {
 		model.Action1D{Parameter: NINTH},
 		model.Action1D{Parameter: TENTH},
 	}
-	bandit := func(__ *model.State, action model.Action) (*model.State, model.Reward) {
+	bandit := func(_ model.State, action model.Action) (model.State, model.Reward) {
 		log.Println("Action taken:", action)
 		time.Sleep(1 * time.Second)
-		return __, model.Reward(math.Pow(action.Value().Float64(), 1/action.Value().Float64()))
+		_, r := action.ValueFunc()(nil, action)
+		return nil, model.Reward(math.Pow(r.Value(), 1/r.Value()))
 	}
-	SimpleBandit(bandit, actions, .05)
+	SimpleBandit(bandit, actions, 0.05)
 }

@@ -1,6 +1,11 @@
 package model
 
-const TERMINAL_STATE State = 0
+import (
+	"gonum.org/v1/gonum/mat"
+)
 
-// State is the code value for an environment state
-type State int
+// State defines the interface for any state implementation.
+type State interface {
+	IsTerminal() bool
+	Vector() mat.Vector
+}

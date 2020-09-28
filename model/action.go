@@ -8,26 +8,30 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// Action interface must be implemented as some kind of vector of n parameter(s)/dimension(s)
-type Action interface {
-	Value() Value
-	Vector() mat.Vector
-}
-
 // ActionFunc is the actual m.o. for any action granting a reward by transforming a state into another,
 // ie. when implementing such a function, it should take the current state and the action to take and
 // return the new state and corresponding reward.
-type ActionFunc func(*State, Action) (*State, Reward)
+type ActionFunc func(State, Action) (State, Reward)
+
+// Action interface must be implemented as struct of n parameter(s)/dimension(s).
+type Action interface {
+	ValueFunc() ActionFunc
+	Vector() mat.Vector
+}
+
+// ActionValues is a map of action -> reward values.
+type ActionValues map[Action]Reward
 
 // Argmax returns the greedy action in the passed map of values
-// or a random action if multiple actions are greedy
-func Argmax(values map[Action]Value) (greedy *Action) {
-	var highest Value = 0
+// or a random action if multiple actions are greedy.
+func Argmax(values map[Action]Reward) (greedy *Action) {
+	var highest Reward = 0
 	var greedies []*Action
 	for a := range values {
-		if a.Value() > highest {
+		_, v := a.ValueFunc()(nil, a)
+		if v > highest {
 			greedies = append(greedies, &a)
-			highest = a.Value()
+			highest = v
 		}
 	}
 	if len(greedies) != 1 {
@@ -66,8 +70,12 @@ type Action1D struct {
 	Parameter float64
 }
 
-func (a Action1D) Value() Value {
-	return Value(a.Parameter)
+func (a Action1D) ValueFunc() ActionFunc {
+	return func(current State, _ Action) (next State, r Reward) {
+		next = current
+		r = Reward(a.Parameter)
+		return
+	}
 }
 
 func (a Action1D) Vector() mat.Vector {
@@ -80,8 +88,12 @@ type Action2D struct {
 	Y float64
 }
 
-func (a Action2D) Value() Value {
-	return Value(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2)))
+func (a Action2D) ValueFunc() ActionFunc {
+	return func(current State, _ Action) (next State, r Reward) {
+		next = current
+		r = Reward(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2)))
+		return
+	}
 }
 
 func (a Action2D) Vector() mat.Vector {
@@ -95,8 +107,12 @@ type Action3D struct {
 	Z float64
 }
 
-func (a Action3D) Value() Value {
-	return Value(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2) + math.Pow(a.Z, 2)))
+func (a Action3D) ValueFunc() ActionFunc {
+	return func(current State, _ Action) (next State, r Reward) {
+		next = current
+		r = Reward(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2) + math.Pow(a.Z, 2)))
+		return
+	}
 }
 
 func (a Action3D) Vector() mat.Vector {
@@ -111,8 +127,12 @@ type Action4D struct {
 	T float64
 }
 
-func (a Action4D) Value() Value {
-	return Value(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2) + math.Pow(a.Z, 2) + math.Pow(a.T, 2)))
+func (a Action4D) ValueFunc() ActionFunc {
+	return func(current State, _ Action) (next State, r Reward) {
+		next = current
+		r = Reward(math.Sqrt(math.Pow(a.X, 2) + math.Pow(a.Y, 2) + math.Pow(a.Z, 2) + math.Pow(a.T, 2)))
+		return
+	}
 }
 
 func (a Action4D) Vector() mat.Vector {
