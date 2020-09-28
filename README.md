@@ -1,5 +1,10 @@
 # reinforcement-learning-in-golang
 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/cyrildever/reinforcement-learning-in-golang)
+![GitHub last commit](https://img.shields.io/github/last-commit/cyrildever/reinforcement-learning-in-golang)
+![GitHub issues](https://img.shields.io/github/issues/cyrildever/reinforcement-learning-in-golang)
+![GitHub](https://img.shields.io/github/license/cyrildever/reinforcement-learning-in-golang)
+
 Code freely created in Go from the ["Reinforcement Learning - An Introduction"](https://mitpress.mit.edu/books/reinforcement-learning-second-edition) book by Richard S. Sutton and Andrew G. Barto.
 
 
