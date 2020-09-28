@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"rl-algo/agent"
+	"rl-algo/dp"
 )
 
 // Usage:
@@ -23,6 +24,8 @@ func main() {
 	fmt.Println("")
 
 	switch *test {
+	case "iterative-policy-evaluation":
+		dp.TestIterativePolicyEvaluation()
 	case "simple-bandit":
 		agent.TestSimpleBandit()
 	}

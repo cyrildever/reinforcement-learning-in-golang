@@ -45,6 +45,45 @@ bandit := func(a model.Action) (r model.Reward) {
 agent.SimpleBandit(bandit, actions, .05)
 ```
 
+##### Dynamic programming
+
+```golang
+import (
+    "rl-algo/dp"
+    "rl-algo/model"
+)
+
+// DEFINE ALL STATES
+var states = []model.State{[...]}
+
+// DETERMINE ACTIONS
+var (
+    LEFT  = gridworldAction{-1, 0}
+    RIGHT = gridworldAction{1, 0}
+    UP    = gridworldAction{0, 1}
+    DOWN  = gridworldAction{0, -1}
+)
+actions := []model.Action{LEFT, RIGHT, UP, DOWN}
+
+// DESCRIBE POLICY
+policy := model.Policy{
+    Actions: actions,
+    Gamma:   1,
+    Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
+}
+
+// WRAP-UP IN A MODEL
+mdp := model.Model{
+    Actions: actions,
+    States:  states,
+    Probabilities: func(sPrime model.State, r model.Reward, s model.State, a model.Action) float64 {
+        return 1 / float64(len(actions))
+    },
+}
+
+// DO SOME DYNAMIC PROGRAMMING
+stateValue := dp.IterativePolicyEvaluation(policy, 0.001, mdp)
+```
 
 ### License
 
