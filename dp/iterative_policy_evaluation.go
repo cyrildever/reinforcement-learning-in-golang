@@ -1,6 +1,7 @@
 package dp
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"rl-algo/model"
@@ -43,25 +44,63 @@ func IterativePolicyEvaluation(pi model.Policy, theta float64, mdp model.Model) 
 			}
 			delta = math.Max(delta, math.Abs(float64(v-V[s])))
 		}
-		monitor.LogStateValues(V, mdp.States, mdp.GridWidth, 1, 2, 3, 10, 100, 500)
+		monitor.LogStateValues(V, mdp.States, mdp.GridWidth, 1, 2, 3, 10, 100, 1000)
 	}
 
 	return V
 }
 
-func computeStateValue(s model.State, p model.Policy, mdp model.Model, sv model.StateValue) float64 {
+// Compute value function: V(s) ← Σ 𝛑(a|s) Σ p(s',r|s,a)[r + 𝛾V(s')]
+func computeStateValue(s model.State, p model.Policy, mdp model.Model, previous model.StateValue) float64 {
 	var sumPi float64 = 0
 	var weightedRewards float64 = 0
 	for _, a := range mdp.Actions {
 		sPrime, r := a.ValueFunc()(s, a)
 		sumPi += p.Pi(a, s)
-		prob := mdp.Probabilities(sPrime, r, s, a)
-		weightedRewards += prob * (r.Value() + p.Gamma*sv.Get(sPrime))
+		prob := mdp.Probability(sPrime, r, s, a)
+		weightedRewards += prob * (r.Value() + p.Gamma*previous.Get(sPrime))
 	}
 	return sumPi * weightedRewards
 }
 
 //--- TEST
+
+func TestIterativePolicyEvaluation() {
+	log.Println("Testing IterativePolicyEvaluation (gridworld)... (Press Ctrl^C to end)")
+	grid := []model.State{
+		gridworldState{0, 0}, gridworldState{1, 0}, gridworldState{2, 0}, gridworldState{3, 0},
+		gridworldState{0, 1}, gridworldState{1, 1}, gridworldState{2, 1}, gridworldState{3, 1},
+		gridworldState{0, 2}, gridworldState{1, 2}, gridworldState{2, 2}, gridworldState{3, 2},
+		gridworldState{0, 3}, gridworldState{1, 3}, gridworldState{2, 3}, gridworldState{3, 3},
+	}
+	actions := []model.Action{
+		gridworldAction{"left", -1, 0},
+		gridworldAction{"right", 1, 0},
+		gridworldAction{"up", 0, -1},
+		gridworldAction{"down", 0, 1},
+	}
+	policy := model.Policy{
+		Actions: actions,
+		Gamma:   1,
+		Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
+	}
+	mdp := model.Model{
+		Actions: actions,
+		States:  grid,
+		Probability: func(sPrime model.State, r model.Reward, s model.State, a model.Action) float64 {
+			return 1 / float64(len(actions))
+		},
+		GridWidth: 4,
+	}
+	optimal := IterativePolicyEvaluation(policy, 1e-12, mdp)
+
+	var functions []model.ActionFunc
+	for _, a := range actions {
+		functions = append(functions, a.ValueFunc())
+	}
+	_, displayOptimalPolicy := optimal.ToPolicy(grid, actions, functions, mdp.GridWidth)
+	fmt.Printf("\nOptimal policy result:\n%s\n\n%s", optimal.Print(grid, mdp.GridWidth), displayOptimalPolicy)
+}
 
 // State implementation for the gridworld
 type gridworldState struct {
@@ -79,6 +118,9 @@ func (s gridworldState) Vector() mat.Vector {
 // Action implementation for the gridworld
 type gridworldAction model.Action2D
 
+func (a gridworldAction) GetName() string {
+	return a.Name
+}
 func (a gridworldAction) ValueFunc() model.ActionFunc {
 	return func(current model.State, _ model.Action) (next model.State, r model.Reward) {
 		next = gridworldState{
@@ -94,35 +136,4 @@ func (a gridworldAction) ValueFunc() model.ActionFunc {
 }
 func (a gridworldAction) Vector() mat.Vector {
 	return mat.NewVecDense(2, []float64{a.X, a.Y})
-}
-
-func TestIterativePolicyEvaluation() {
-	log.Println("Testing IterativePolicyEvaluation (gridworld)... (Press Ctrl^C to end)")
-	grid := []model.State{
-		gridworldState{0, 0}, gridworldState{1, 0}, gridworldState{2, 0}, gridworldState{3, 0},
-		gridworldState{0, 1}, gridworldState{1, 1}, gridworldState{2, 1}, gridworldState{3, 1},
-		gridworldState{0, 2}, gridworldState{1, 2}, gridworldState{2, 2}, gridworldState{3, 2},
-		gridworldState{0, 3}, gridworldState{1, 3}, gridworldState{2, 3}, gridworldState{3, 3},
-	}
-	var (
-		LEFT  = gridworldAction{-1, 0}
-		RIGHT = gridworldAction{1, 0}
-		UP    = gridworldAction{0, 1}
-		DOWN  = gridworldAction{0, -1}
-	)
-	actions := []model.Action{LEFT, RIGHT, UP, DOWN}
-	policy := model.Policy{
-		Actions: actions,
-		Gamma:   1,
-		Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
-	}
-	mdp := model.Model{
-		Actions: actions,
-		States:  grid,
-		Probabilities: func(sPrime model.State, r model.Reward, s model.State, a model.Action) float64 {
-			return 1 / float64(len(actions))
-		},
-		GridWidth: 4,
-	}
-	_ = IterativePolicyEvaluation(policy, 1e-12, mdp)
 }

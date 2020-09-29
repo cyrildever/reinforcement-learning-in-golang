@@ -15,6 +15,7 @@ type ActionFunc func(State, Action) (State, Reward)
 
 // Action interface must be implemented as struct of n parameter(s)/dimension(s).
 type Action interface {
+	GetName() string
 	ValueFunc() ActionFunc
 	Vector() mat.Vector
 }
@@ -67,9 +68,13 @@ func Random(items []Action) Action {
 
 // Action1D is a one-dimension vector implementing the Action interface
 type Action1D struct {
+	Name      string
 	Parameter float64
 }
 
+func (a Action1D) GetName() string {
+	return a.Name
+}
 func (a Action1D) ValueFunc() ActionFunc {
 	return func(current State, _ Action) (next State, r Reward) {
 		next = current
@@ -77,17 +82,20 @@ func (a Action1D) ValueFunc() ActionFunc {
 		return
 	}
 }
-
 func (a Action1D) Vector() mat.Vector {
 	return mat.NewVecDense(1, []float64{a.Parameter})
 }
 
 // Action2D is a two-dimension vector implementing the Action interface
 type Action2D struct {
-	X float64
-	Y float64
+	Name string
+	X    float64
+	Y    float64
 }
 
+func (a Action2D) GetName() string {
+	return a.Name
+}
 func (a Action2D) ValueFunc() ActionFunc {
 	return func(current State, _ Action) (next State, r Reward) {
 		next = current
@@ -95,18 +103,21 @@ func (a Action2D) ValueFunc() ActionFunc {
 		return
 	}
 }
-
 func (a Action2D) Vector() mat.Vector {
 	return mat.NewVecDense(2, []float64{a.X, a.Y})
 }
 
 // Action3D is a three-dimension vector implementing the Action interface
 type Action3D struct {
-	X float64
-	Y float64
-	Z float64
+	Name string
+	X    float64
+	Y    float64
+	Z    float64
 }
 
+func (a Action3D) GetName() string {
+	return a.Name
+}
 func (a Action3D) ValueFunc() ActionFunc {
 	return func(current State, _ Action) (next State, r Reward) {
 		next = current
@@ -114,19 +125,22 @@ func (a Action3D) ValueFunc() ActionFunc {
 		return
 	}
 }
-
 func (a Action3D) Vector() mat.Vector {
 	return mat.NewVecDense(3, []float64{a.X, a.Y, a.Z})
 }
 
 // Action4D is a four-dimension vector implementing the Action interface
 type Action4D struct {
-	X float64
-	Y float64
-	Z float64
-	T float64
+	Name string
+	X    float64
+	Y    float64
+	Z    float64
+	T    float64
 }
 
+func (a Action4D) GetName() string {
+	return a.Name
+}
 func (a Action4D) ValueFunc() ActionFunc {
 	return func(current State, _ Action) (next State, r Reward) {
 		next = current
@@ -134,7 +148,6 @@ func (a Action4D) ValueFunc() ActionFunc {
 		return
 	}
 }
-
 func (a Action4D) Vector() mat.Vector {
 	return mat.NewVecDense(4, []float64{a.X, a.Y, a.Z, a.T})
 }
