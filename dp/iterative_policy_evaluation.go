@@ -79,7 +79,7 @@ func TestIterativePolicyEvaluation() {
 		gridworldAction{"up", 0, -1},
 		gridworldAction{"down", 0, 1},
 	}
-	policy := model.Policy{
+	deterministic := model.Policy{
 		Actions: actions,
 		Gamma:   1,
 		Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
@@ -92,7 +92,7 @@ func TestIterativePolicyEvaluation() {
 		},
 		GridWidth: 4,
 	}
-	optimal := IterativePolicyEvaluation(policy, 1e-12, mdp)
+	optimal := IterativePolicyEvaluation(deterministic, 1e-12, mdp)
 
 	var functions []model.ActionFunc
 	for _, a := range actions {
