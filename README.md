@@ -88,6 +88,14 @@ mdp := model.Model{
 
 // DO SOME DYNAMIC PROGRAMMING
 stateValue := dp.IterativePolicyEvaluation(policy, 0.001, mdp)
+
+// TRANSFORM TO POLICY
+functions := make(map[model.Action]model.ActionFunc, len(actions))
+for _, a := range actions {
+    functions[a] = a.ValueFunc()
+}
+stateActions, display := stateValue.ToPolicy(functions, states, 4)
+log.Println(display)
 ```
 
 ### License

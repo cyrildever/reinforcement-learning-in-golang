@@ -92,14 +92,15 @@ func TestIterativePolicyEvaluation() {
 		},
 		GridWidth: 4,
 	}
-	optimal := IterativePolicyEvaluation(deterministic, 1e-12, mdp)
+	theta := 1e-12
+	optimal := IterativePolicyEvaluation(deterministic, theta, mdp)
 
 	functions := make(map[model.Action]model.ActionFunc, len(actions))
 	for _, a := range actions {
 		functions[a] = a.ValueFunc()
 	}
 	_, displayOptimalPolicy := optimal.ToPolicy(functions, grid, mdp.GridWidth)
-	fmt.Printf("\nOptimal policy result:\n%s\n\n%s", optimal.Print(grid, mdp.GridWidth), displayOptimalPolicy)
+	fmt.Printf("\nPolicy result at θ = %.1e:\n%s\n\n%s\n", theta, optimal.Print(grid, mdp.GridWidth), displayOptimalPolicy)
 }
 
 // State implementation for the gridworld
