@@ -12,16 +12,16 @@ import (
 
 // IterativePolicyEvaluation implements the "iterative policy evaluation, for estimating V ≈ v𝛑" (page 75)
 //
-// It takes as arguments the input policy approximation function 𝛑 to use for evaluation and the algorithm parameter θ
-// as well as the model definition to be used as a Markov Decision Process (MDP), ie. the different states of the
-// environment including the terminal one (S+), the possible actions at each step and the corresponding probability function.
+// It takes as arguments the model definition to be used as a Markov Decision Process (MDP) (including the policy
+// approximation function 𝛑 to use for evaluation, the different states (S+) and the probability function for each state)
+// as well as the algorithm parameter θ.
 // It returns the expected (and potentially optimal) state value map for the evaluated policy.
-func IterativePolicyEvaluation(pi model.Policy, theta float64, mdp model.Model) model.StateValue {
+func IterativePolicyEvaluation(mdp model.Model, theta float64) model.StateValue {
 	if theta < 0 {
 		log.Fatalln("invalid theta threshold")
 	}
-	if len(mdp.States) == 0 || len(mdp.Actions) == 0 {
-		log.Fatalln("invalid empty model parameter(s)")
+	if len(mdp.States) == 0 || len(mdp.Policy.StateActions) == 0 {
+		log.Fatalln("invalid empty model")
 	}
 
 	// Initialize
@@ -40,7 +40,7 @@ func IterativePolicyEvaluation(pi model.Policy, theta float64, mdp model.Model) 
 			if s.IsTerminal() {
 				V[s] = 0
 			} else {
-				V[s] = computeStateValue(s, pi, mdp, previous)
+				V[s] = computeStateValue(s, mdp, previous)
 			}
 			delta = math.Max(delta, math.Abs(float64(v-V[s])))
 		}
@@ -51,14 +51,15 @@ func IterativePolicyEvaluation(pi model.Policy, theta float64, mdp model.Model) 
 }
 
 // Compute value function: V(s) ← Σ 𝛑(a|s) Σ p(s',r|s,a)[r + 𝛾V(s')]
-func computeStateValue(s model.State, p model.Policy, mdp model.Model, previous model.StateValue) float64 {
+func computeStateValue(s model.State, mdp model.Model, previous model.StateValue) float64 {
 	var sumPi float64 = 0
 	var weightedRewards float64 = 0
-	for _, a := range mdp.Actions {
+	actions := mdp.Policy.StateActions[s]
+	for _, a := range actions {
 		sPrime, r := a.ValueFunc()(s, a)
-		sumPi += p.Pi(a, s)
+		sumPi += mdp.Policy.Pi(a, s)
 		prob := mdp.Probability(sPrime, r, s, a)
-		weightedRewards += prob * (r.Value() + p.Gamma*previous.Get(sPrime))
+		weightedRewards += prob * (r.Value() + mdp.Policy.Gamma*previous.Get(sPrime))
 	}
 	return sumPi * weightedRewards
 }
@@ -79,21 +80,29 @@ func TestIterativePolicyEvaluation() {
 		gridworldAction{"up", 0, -1},
 		gridworldAction{"down", 0, 1},
 	}
+	stateActions := make(model.StateActions, len(grid))
+	for _, s := range grid {
+		if s.IsTerminal() {
+			stateActions[s] = []model.Action{} // NO ACTION
+		} else {
+			stateActions[s] = actions
+		}
+	}
 	deterministic := model.Policy{
-		Actions: actions,
-		Gamma:   1,
-		Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
+		StateActions: stateActions,
+		Gamma:        1,
+		Pi:           func(a model.Action, s model.State) float64 { return 0.25 },
 	}
 	mdp := model.Model{
-		Actions: actions,
-		States:  grid,
+		Policy: deterministic,
+		States: grid,
 		Probability: func(sPrime model.State, r model.Reward, s model.State, a model.Action) float64 {
 			return 1 / float64(len(actions))
 		},
 		GridWidth: 4,
 	}
 	theta := 1e-12
-	optimal := IterativePolicyEvaluation(deterministic, theta, mdp)
+	optimal := IterativePolicyEvaluation(mdp, theta)
 
 	functions := make(map[model.Action]model.ActionFunc, len(actions))
 	for _, a := range actions {

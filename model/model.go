@@ -2,7 +2,7 @@ package model
 
 // Model sums up the characteristics of a model
 type Model struct {
-	Actions     []Action
+	Policy      Policy
 	States      []State
 	Probability ProbabilityFunc
 	GridWidth   int // optional value for model representing some kind of grid/2D matrix

@@ -65,23 +65,31 @@ var states = []model.State{[...]}
 var (
     LEFT  = gridworldAction{-1, 0}
     RIGHT = gridworldAction{1, 0}
-    UP    = gridworldAction{0, 1}
-    DOWN  = gridworldAction{0, -1}
+    UP    = gridworldAction{0, -1}
+    DOWN  = gridworldAction{0, 1}
 )
 actions := []model.Action{LEFT, RIGHT, UP, DOWN}
+stateActions := make(model.StateActions, len(grid))
+for _, s := range grid {
+    if !s.IsTerminal() {
+        stateActions[s] = actions
+    } else {
+        stateActions[s] = []model.Action{}
+    }
+}
 
 // DESCRIBE POLICY
 policy := model.Policy{
-    Actions: actions,
+    StateActions: stateActions,
     Gamma:   1,
     Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
 }
 
 // WRAP-UP IN A MODEL
 mdp := model.Model{
-    Actions: actions,
+    Policy: policy,
     States:  states,
-    Probabilities: func(sPrime model.State, r model.Reward, s model.State, a model.Action) float64 {
+    Probability: func(sPrime model.State, r model.Reward, s model.State, a model.Action) float64 {
         return 1 / float64(len(actions))
     },
 }
@@ -94,8 +102,11 @@ functions := make(map[model.Action]model.ActionFunc, len(actions))
 for _, a := range actions {
     functions[a] = a.ValueFunc()
 }
-stateActions, display := stateValue.ToPolicy(functions, states, 4)
+newStateActions, display := stateValue.ToPolicy(functions, states, 4)
 log.Println(display)
+
+// UPDATE MODEL
+mdp.Policy.StateActions = newStateActions
 ```
 
 ### License
