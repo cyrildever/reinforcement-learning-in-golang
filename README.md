@@ -69,18 +69,18 @@ var (
     DOWN  = gridworldAction{0, 1}
 )
 actions := []model.Action{LEFT, RIGHT, UP, DOWN}
-stateActions := make(model.StateActions, len(grid))
+randomStateActions := make(model.StateActions, len(grid))
 for _, s := range grid {
     if !s.IsTerminal() {
-        stateActions[s] = actions
+        randomStateActions[s] = actions
     } else {
-        stateActions[s] = []model.Action{}
+        randomStateActions[s] = []model.Action{}
     }
 }
 
 // DESCRIBE POLICY
 policy := model.Policy{
-    StateActions: stateActions,
+    StateActions: randomStateActions,
     Gamma:   1,
     Pi:      func(a model.Action, s model.State) float64 { return 0.25 },
 }
@@ -95,7 +95,7 @@ mdp := model.Model{
 }
 
 // DO SOME DYNAMIC PROGRAMMING
-stateValue := dp.IterativePolicyEvaluation(policy, 0.001, mdp)
+stateValue := dp.IterativePolicyEvaluation(mdp, 0.001)
 
 // TRANSFORM TO POLICY
 functions := make(map[model.Action]model.ActionFunc, len(actions))
@@ -108,6 +108,7 @@ log.Println(display)
 // UPDATE MODEL
 mdp.Policy.StateActions = newStateActions
 ```
+
 
 ### License
 

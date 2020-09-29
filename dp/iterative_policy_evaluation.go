@@ -80,16 +80,16 @@ func TestIterativePolicyEvaluation() {
 		gridworldAction{"up", 0, -1},
 		gridworldAction{"down", 0, 1},
 	}
-	stateActions := make(model.StateActions, len(grid))
+	random := make(model.StateActions, len(grid))
 	for _, s := range grid {
 		if s.IsTerminal() {
-			stateActions[s] = []model.Action{} // NO ACTION
+			random[s] = []model.Action{} // NO ACTION
 		} else {
-			stateActions[s] = actions
+			random[s] = actions
 		}
 	}
 	deterministic := model.Policy{
-		StateActions: stateActions,
+		StateActions: random,
 		Gamma:        1,
 		Pi:           func(a model.Action, s model.State) float64 { return 0.25 },
 	}
