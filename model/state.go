@@ -59,7 +59,7 @@ func (sv StateValue) Print(states []State, width int) (str string) {
 }
 
 // ToPolicy transforms the state value to policy for action
-func (sv StateValue) ToPolicy(states []State, actions []Action, functions []ActionFunc, width int) (map[State][]Action, string) {
+func (sv StateValue) ToPolicy(actions map[Action]ActionFunc, states []State, width int) (map[State][]Action, string) {
 	// Build policy
 	policy := make(map[State][]Action, len(states))
 	for _, s := range states {
@@ -67,8 +67,8 @@ func (sv StateValue) ToPolicy(states []State, actions []Action, functions []Acti
 			policy[s] = []Action{}
 		} else {
 			values := make(map[Action]float64, len(actions))
-			for idx, a := range actions {
-				next, _ := functions[idx](s, a)
+			for a, f := range actions {
+				next, _ := f(s, a)
 				if next == s {
 					values[a] = -math.MaxFloat64
 				} else {

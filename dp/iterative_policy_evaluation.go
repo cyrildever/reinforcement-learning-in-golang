@@ -94,11 +94,11 @@ func TestIterativePolicyEvaluation() {
 	}
 	optimal := IterativePolicyEvaluation(deterministic, 1e-12, mdp)
 
-	var functions []model.ActionFunc
+	functions := make(map[model.Action]model.ActionFunc, len(actions))
 	for _, a := range actions {
-		functions = append(functions, a.ValueFunc())
+		functions[a] = a.ValueFunc()
 	}
-	_, displayOptimalPolicy := optimal.ToPolicy(grid, actions, functions, mdp.GridWidth)
+	_, displayOptimalPolicy := optimal.ToPolicy(functions, grid, mdp.GridWidth)
 	fmt.Printf("\nOptimal policy result:\n%s\n\n%s", optimal.Print(grid, mdp.GridWidth), displayOptimalPolicy)
 }
 
