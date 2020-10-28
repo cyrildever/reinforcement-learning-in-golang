@@ -12,7 +12,7 @@ Code freely created in Go from the ["Reinforcement Learning - An Introduction"](
 
 After attacking [deep neural networks in Go](https://github.com/cyrildever/neural-networks-and-deep-learning-in-golang), I kept on investigating machine learning algorithms, this time with reinforcement learning. For that, I decided to make my own adaptation of Richard S. Sutton and Andrew G. Barto's reference book on the subject.
 
-The objective here was to transform the described algorithms found throughout the book in Go programming language. But, rest assured, I had no intention whatsoever to make it some kind of a reference. It was just simple practice. So don't see it for more than it is: I'm not claiming it's the best production way to implement each or any of these algorithms. But just a way to have fun while reading the book (I strongly advise you to read it, BTW).
+The objective here was to transform some of the described algorithms found throughout the book in Go programming language. But, rest assured, I had no intention whatsoever to make it some kind of a reference. It was just simple practice. So don't see it for more than it is: I'm not claiming it's the best production way to implement each or any of these algorithms. But just a way to have fun while reading the book (I strongly advise you to read it, BTW).
 
 _NB: I mentioned the reference to the book boxes in the code according to the second edition paging._
 

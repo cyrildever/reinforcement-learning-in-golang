@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("")
 	fmt.Println("COPYRIGHT NOTICE")
 	fmt.Println("================")
-	fmt.Println("This library contains my implementations of the 'Reinforcement Learning - An Introduction' algorithms. It's available under a MIT license.")
+	fmt.Println("This library contains my implementations of some of the 'Reinforcement Learning - An Introduction' algorithms. It's available under a MIT license.")
 	fmt.Println("")
 	fmt.Println("© 2020 Cyril Dever. All rights reserved.")
 	fmt.Println("")
