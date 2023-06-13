@@ -112,7 +112,7 @@ mdp.Policy.StateActions = newStateActions
 
 ### License
 
-The code in Go is distributed under a [MIT license](LICENSE).
+The code in Go is distributed under a [MIT license](LICENSE). \
 Please check Sutton et al. book for credits on the algorithms.
 
 
