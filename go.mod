@@ -1,8 +1,10 @@
 module rl-algo
 
-go 1.12
+go 1.22.0
+
+toolchain go1.22.1
 
 require (
-	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
-	gonum.org/v1/gonum v0.13.0
+	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
+	gonum.org/v1/gonum v0.15.1
 )

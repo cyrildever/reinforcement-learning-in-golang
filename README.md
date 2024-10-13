@@ -117,4 +117,4 @@ Please check Sutton et al. book for credits on the algorithms.
 
 
 <hr />
-&copy; 2020-2023 Cyril Dever. All rights reserved.
+&copy; 2020-2024 Cyril Dever. All rights reserved.
